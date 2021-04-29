@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 
-class WheelPicker : RecyclerView {
+open class WheelPicker : RecyclerView {
     private companion object {
         private const val DEFAULT_SHADER_COLOR = Color.BLACK
         private const val DEFAULT_WHEEL_ITEM_COUNT = 5
