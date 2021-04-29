@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
+import kotlin.math.abs
 
 open class WheelPicker : RecyclerView {
     private companion object {
@@ -102,9 +103,19 @@ open class WheelPicker : RecyclerView {
 
         val layoutManager = layoutManager ?: return
         val snapped = snapHelper.findSnapView(layoutManager) ?: return
-        val position = layoutManager.getPosition(snapped)
-        val itemId = adapter?.getItemId(position) ?: -1
-        dispatchOnSelectedPositionChange(position, itemId)
+        val snappedPosition = layoutManager.getPosition(snapped)
+
+        (0 until layoutManager.childCount)
+            .mapNotNull { layoutManager.getChildAt(it) }
+            .forEach { itemView ->
+                val position = layoutManager.getPosition(itemView)
+                val diff = abs(snappedPosition - position)
+                itemView.scaleX = 1.0f - diff * 0.2f
+                itemView.scaleY = 1.0f - diff * 0.2f
+            }
+
+        val itemId = adapter?.getItemId(snappedPosition) ?: -1
+        dispatchOnSelectedPositionChange(snappedPosition, itemId)
     }
 
     override fun setAdapter(adapter: Adapter<*>?) {
