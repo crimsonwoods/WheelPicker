@@ -9,7 +9,7 @@ import kotlin.math.abs
  */
 class ScalingItemTransformer(
     private val scalingCoefficient: Float = SCALING_COEFFICIENT
-) : WheelPicker.ItemTransformer {
+) : ItemTransformer {
     override fun transform(view: View, position: Int, centerPosition: Int) {
         val diff = abs(centerPosition - position)
         view.scaleX = 1.0f - diff * scalingCoefficient

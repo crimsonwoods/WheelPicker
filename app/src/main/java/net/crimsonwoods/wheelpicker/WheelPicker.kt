@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.os.Build
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.View
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.MainThread
@@ -330,7 +329,4 @@ open class WheelPicker : RecyclerView {
         fun onChange(position: Int, itemId: Long)
     }
 
-    fun interface ItemTransformer {
-        fun transform(view: View, position: Int, centerPosition: Int)
-    }
 }
