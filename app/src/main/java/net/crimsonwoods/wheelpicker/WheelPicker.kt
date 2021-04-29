@@ -44,6 +44,7 @@ open class WheelPicker : RecyclerView {
         set(value) {
             assertMainThread()
             field = value
+            invalidate()
         }
 
     @get:MainThread
@@ -56,6 +57,7 @@ open class WheelPicker : RecyclerView {
         set(value) {
             assertMainThread()
             field = value
+            requestLayout()
         }
 
     constructor(context: Context) : super(context) {
