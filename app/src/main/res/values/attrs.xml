@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WheelPicker">
+        <attr name="android:solidColor" />
+        <attr name="wheelSize" format="enum">
+            <enum name="small" value="3" />
+            <enum name="medium" value="5" />
+            <enum name="large" value="7" />
+        </attr>
+    </declare-styleable>
+</resources>
