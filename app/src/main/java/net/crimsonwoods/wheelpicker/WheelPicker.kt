@@ -3,17 +3,12 @@ package net.crimsonwoods.wheelpicker
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.LinearGradient
-import android.graphics.Matrix
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.Shader
 import android.os.Build
 import android.util.AttributeSet
 import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.annotation.MainThread
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.view.doOnNextLayout
@@ -30,51 +25,26 @@ open class WheelPicker : RecyclerView {
         private const val DEFAULT_SHADER_COLOR = Color.BLACK
         private const val DEFAULT_WHEEL_ITEM_COUNT = 5
         private const val DEFAULT_FADE_STRENGTH = 0.9f
-
-        private fun makeShader(@ColorInt solidColor: Int): LinearGradient {
-            return if (solidColor != 0) {
-                LinearGradient(
-                    0f, 0f, 0f, 1f,
-                    Color.argb(
-                        0xff,
-                        Color.red(solidColor),
-                        Color.green(solidColor),
-                        Color.blue(solidColor)
-                    ),
-                    Color.argb(
-                        0,
-                        Color.red(solidColor),
-                        Color.green(solidColor),
-                        Color.blue(solidColor)
-                    ),
-                    Shader.TileMode.CLAMP
-                )
-            } else {
-                LinearGradient(
-                    0f, 0f, 0f, 1f,
-                    Color.BLACK,
-                    Color.TRANSPARENT,
-                    Shader.TileMode.CLAMP
-                )
-            }
-        }
     }
 
     private val snapHelper: SnapHelper = LinearSnapHelper()
-
-    private val fadePaint = Paint().apply {
-        xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
-    }
-    private val fadeMatrix = Matrix()
-
-    private lateinit var fade: Shader
-
-    private var shaderColor: Int = Color.TRANSPARENT
-
-    private var wheelItemCount = DEFAULT_WHEEL_ITEM_COUNT
-
     private val selectedPositionChangeListeners: MutableList<OnSelectedPositionChangeListener> =
         mutableListOf()
+
+    private var wheelItemCount = DEFAULT_WHEEL_ITEM_COUNT
+    private var solidColorInt: Int = DEFAULT_SHADER_COLOR
+
+    @get:MainThread
+    @set:MainThread
+    var fadingEdgeDrawer: FadingEdgeDrawer = DefaultFadingEdgeDrawer()
+        get() {
+            assertMainThread()
+            return field
+        }
+        set(value) {
+            assertMainThread()
+            field = value
+        }
 
     constructor(context: Context) : super(context) {
         initialize()
@@ -154,12 +124,17 @@ open class WheelPicker : RecyclerView {
         }
     }
 
+    @MainThread
+    @ColorInt
+    override fun getSolidColor(): Int {
+        assertMainThread()
+        return solidColorInt
+    }
+
     override fun draw(c: Canvas) {
         super.draw(c)
 
         val itemHeight = itemHeight() ?: return
-
-        val saveCount = c.saveCount
 
         val fadeHeight = (height - itemHeight) / 2f
         val length = if (top + fadeHeight > bottom - fadeHeight) {
@@ -168,36 +143,15 @@ open class WheelPicker : RecyclerView {
             fadeHeight
         }
 
-        // draw vertical fading edge on bottom
-        fadeMatrix.setScale(1f, fadeHeight * DEFAULT_FADE_STRENGTH)
-        fadeMatrix.postRotate(180f)
-        fadeMatrix.postTranslate(left.toFloat(), bottom.toFloat())
-        fade.setLocalMatrix(fadeMatrix)
-        fadePaint.shader = fade
-        if (shaderColor != 0) {
-            c.drawRect(
-                left.toFloat(),
-                bottom.toFloat() - length,
-                right.toFloat(),
-                bottom.toFloat(),
-                fadePaint
-            )
-        }
+        val saveCount = c.saveCount
 
-        // draw vertical fading edge on top
-        fadeMatrix.setScale(1f, fadeHeight * DEFAULT_FADE_STRENGTH)
-        fadeMatrix.postTranslate(left.toFloat(), top.toFloat())
-        fade.setLocalMatrix(fadeMatrix)
-        fadePaint.shader = fade
-        if (shaderColor != 0) {
-            c.drawRect(
-                left.toFloat(),
-                top.toFloat(),
-                right.toFloat(),
-                top.toFloat() + length,
-                fadePaint
-            )
-        }
+        fadingEdgeDrawer.draw(
+            view = this,
+            canvas = c,
+            fadeHeight = fadeHeight,
+            fadeStrength = DEFAULT_FADE_STRENGTH,
+            fadeLength = length
+        )
 
         c.restoreToCount(saveCount)
     }
@@ -252,13 +206,8 @@ open class WheelPicker : RecyclerView {
                 R.styleable.WheelPicker_android_solidColor,
                 defaultShaderColor
             )
-            this.shaderColor = shaderColor
-            fade = makeShader(shaderColor)
-            if (shaderColor != 0) {
-                fadePaint.xfermode = null
-            } else {
-                fadePaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
-            }
+            solidColorInt = shaderColor
+            (fadingEdgeDrawer as DefaultFadingEdgeDrawer).setColor(shaderColor)
 
             wheelItemCount = it.getInt(
                 R.styleable.WheelPicker_wheelSize,
