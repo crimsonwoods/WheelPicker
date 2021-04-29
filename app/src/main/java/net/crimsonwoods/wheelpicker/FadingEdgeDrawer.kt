@@ -2,7 +2,7 @@ package net.crimsonwoods.wheelpicker
 
 import android.graphics.Canvas
 
-interface FadingEdgeDrawer {
+fun interface FadingEdgeDrawer {
     fun draw(
         view: WheelPicker,
         canvas: Canvas,
