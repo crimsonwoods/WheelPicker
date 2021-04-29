@@ -20,6 +20,11 @@ import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 
+/**
+ * Customizable Picker view based on RecyclerView having drum roll like looks.
+ * User can scroll up/down items.
+ * A selected item is snapped to center position.
+ */
 open class WheelPicker : RecyclerView {
     private companion object {
         private const val DEFAULT_SHADER_COLOR = Color.BLACK
@@ -34,6 +39,10 @@ open class WheelPicker : RecyclerView {
     private var wheelItemCount = DEFAULT_WHEEL_ITEM_COUNT
     private var solidColorInt: Int = DEFAULT_SHADER_COLOR
 
+    /**
+     * Get or set an instance of [FadingEdgeDrawer].
+     * By default, an instance of [DefaultFadingEdgeDrawer] is set.
+     */
     @get:MainThread
     @set:MainThread
     var fadingEdgeDrawer: FadingEdgeDrawer = DefaultFadingEdgeDrawer()
@@ -47,6 +56,10 @@ open class WheelPicker : RecyclerView {
             invalidate()
         }
 
+    /**
+     * Get or set an instance of [ItemTransformer].
+     * By default, an instance of [ScalingItemTransformer] is set.
+     */
     @get:MainThread
     @set:MainThread
     var itemTransformer: ItemTransformer = ScalingItemTransformer()
