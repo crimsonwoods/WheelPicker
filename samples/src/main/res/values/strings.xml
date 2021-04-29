@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">WheelPicker - Sample</string>
+    <string name="item_format">%1$s - %2$s</string>
+</resources>
