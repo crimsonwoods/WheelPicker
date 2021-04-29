@@ -238,7 +238,7 @@ open class WheelPicker : RecyclerView {
                 DEFAULT_SHADER_COLOR
             )
             val shaderColor = it.getColor(
-                R.styleable.WheelPicker_android_solidColor,
+                R.styleable.WheelPicker_fadingEdgeColor,
                 defaultShaderColor
             )
             solidColorInt = shaderColor
