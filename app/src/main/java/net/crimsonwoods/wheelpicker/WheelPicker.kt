@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Build
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.View
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.MainThread
@@ -19,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
-import kotlin.math.abs
 
 open class WheelPicker : RecyclerView {
     private companion object {
@@ -38,6 +38,18 @@ open class WheelPicker : RecyclerView {
     @get:MainThread
     @set:MainThread
     var fadingEdgeDrawer: FadingEdgeDrawer = DefaultFadingEdgeDrawer()
+        get() {
+            assertMainThread()
+            return field
+        }
+        set(value) {
+            assertMainThread()
+            field = value
+        }
+
+    @get:MainThread
+    @set:MainThread
+    var itemTransformer: ItemTransformer = ScalingItemTransformer()
         get() {
             assertMainThread()
             return field
@@ -109,9 +121,7 @@ open class WheelPicker : RecyclerView {
             .mapNotNull { layoutManager.getChildAt(it) }
             .forEach { itemView ->
                 val position = layoutManager.getPosition(itemView)
-                val diff = abs(snappedPosition - position)
-                itemView.scaleX = 1.0f - diff * 0.2f
-                itemView.scaleY = 1.0f - diff * 0.2f
+                itemTransformer.transform(itemView, position, snappedPosition)
             }
 
         val itemId = adapter?.getItemId(snappedPosition) ?: -1
@@ -318,5 +328,9 @@ open class WheelPicker : RecyclerView {
 
     fun interface OnSelectedPositionChangeListener {
         fun onChange(position: Int, itemId: Long)
+    }
+
+    fun interface ItemTransformer {
+        fun transform(view: View, position: Int, centerPosition: Int)
     }
 }
