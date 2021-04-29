@@ -328,5 +328,4 @@ open class WheelPicker : RecyclerView {
     fun interface OnSelectedPositionChangeListener {
         fun onChange(position: Int, itemId: Long)
     }
-
 }
