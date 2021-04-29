@@ -4,7 +4,7 @@ import android.view.View
 import kotlin.math.abs
 
 /**
- * Default implementation of [WheelPicker.ItemTransformer].
+ * Default implementation of [ItemTransformer].
  * This transformer scales down the view size.
  */
 class ScalingItemTransformer(
