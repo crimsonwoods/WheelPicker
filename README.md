@@ -5,7 +5,7 @@ Wheel type Picker view based on [AndroidX RecyclerView](https://developer.androi
 
 # Appearance
 
-__TODO__:  take screenshots and paste here.
+![wheel_picker_demo](https://user-images.githubusercontent.com/1096436/116515331-1c530480-a907-11eb-870d-0a8e156b56cd.gif)
 
 # Features
 
