@@ -138,6 +138,18 @@ open class WheelPicker : RecyclerView {
                 val position = layoutManager.getPosition(itemView)
                 itemTransformer.transform(itemView, position, snappedPosition)
             }
+    }
+
+    override fun onScrollStateChanged(state: Int) {
+        super.onScrollStateChanged(state)
+
+        if (state != SCROLL_STATE_IDLE) {
+            return
+        }
+
+        val layoutManager = layoutManager ?: return
+        val snapped = snapHelper.findSnapView(layoutManager) ?: return
+        val snappedPosition = layoutManager.getPosition(snapped)
 
         if (snappedPosition != previousSnappedPosition) {
             if (snappedPosition >= 0) {
