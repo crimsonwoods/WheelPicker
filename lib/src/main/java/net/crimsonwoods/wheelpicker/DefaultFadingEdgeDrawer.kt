@@ -37,33 +37,38 @@ class DefaultFadingEdgeDrawer : FadingEdgeDrawer {
         fadeStrength: Float,
         fadeLength: Float
     ) {
+        val left = 0
+        val right = left + (view.right - view.left)
+        val top = 0
+        val bottom = top + (view.bottom - view.top)
+
         // draw vertical fading edge on bottom
         fadeMatrix.setScale(1f, fadeHeight * fadeStrength)
         fadeMatrix.postRotate(180f)
-        fadeMatrix.postTranslate(view.left.toFloat(), view.bottom.toFloat())
+        fadeMatrix.postTranslate(left.toFloat(), bottom.toFloat())
         fade.setLocalMatrix(fadeMatrix)
         fadePaint.shader = fade
         if (shaderColor != 0) {
             canvas.drawRect(
-                view.left.toFloat(),
-                view.bottom.toFloat() - fadeLength,
-                view.right.toFloat(),
-                view.bottom.toFloat(),
+                left.toFloat(),
+                bottom.toFloat() - fadeLength,
+                right.toFloat(),
+                bottom.toFloat(),
                 fadePaint
             )
         }
 
         // draw vertical fading edge on top
         fadeMatrix.setScale(1f, fadeHeight * fadeStrength)
-        fadeMatrix.postTranslate(view.left.toFloat(), view.top.toFloat())
+        fadeMatrix.postTranslate(left.toFloat(), top.toFloat())
         fade.setLocalMatrix(fadeMatrix)
         fadePaint.shader = fade
         if (shaderColor != 0) {
             canvas.drawRect(
-                view.left.toFloat(),
-                view.top.toFloat(),
-                view.right.toFloat(),
-                view.top.toFloat() + fadeLength,
+                left.toFloat(),
+                top.toFloat(),
+                right.toFloat(),
+                top.toFloat() + fadeLength,
                 fadePaint
             )
         }
