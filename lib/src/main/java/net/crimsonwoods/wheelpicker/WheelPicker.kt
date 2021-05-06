@@ -204,6 +204,12 @@ open class WheelPicker : RecyclerView {
     }
 
     fun scrollToPosition(position: Int, animation: Boolean) {
+        val snapped = snapHelper.findSnapView(layoutManager) ?: return
+        val current = layoutManager?.getPosition(snapped) ?: return
+        if (current == -1 || current == position) {
+            return
+        }
+
         if (animation) {
             smoothScrollToPosition(position)
         } else {
