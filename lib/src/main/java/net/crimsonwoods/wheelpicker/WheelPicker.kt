@@ -15,7 +15,6 @@ import androidx.core.view.doOnNextLayout
 import androidx.core.view.marginBottom
 import androidx.core.view.marginTop
 import androidx.core.view.updatePadding
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
@@ -237,7 +236,7 @@ open class WheelPicker : RecyclerView {
 
     private fun initialize(attrs: AttributeSet? = null, @AttrRes defStyleAttr: Int = 0) {
         clipToPadding = false
-        layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        layoutManager = SlowScrollLinearLayoutManager(context, false)
         overScrollMode = OVER_SCROLL_NEVER
 
         context.obtainStyledAttributes(
