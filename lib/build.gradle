@@ -1,7 +1,11 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'maven-publish'
 }
+
+group = 'com.github.crimsonwoods'
+version = '0.0.1'
 
 android {
     compileSdkVersion 30
@@ -11,7 +15,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName "$version"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,4 +46,18 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                groupId = "$group"
+                artifactId = 'wheelpicker'
+                version = "$version"
+            }
+        }
+    }
 }
