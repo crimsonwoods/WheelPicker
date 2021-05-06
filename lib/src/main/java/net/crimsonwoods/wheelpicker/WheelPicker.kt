@@ -38,6 +38,7 @@ open class WheelPicker : RecyclerView {
 
     private var wheelItemCount = DEFAULT_WHEEL_ITEM_COUNT
     private var solidColorInt: Int = DEFAULT_SHADER_COLOR
+    private var previousSnappedPosition: Int = -1
 
     /**
      * Get or set an instance of [FadingEdgeDrawer].
@@ -138,8 +139,13 @@ open class WheelPicker : RecyclerView {
                 itemTransformer.transform(itemView, position, snappedPosition)
             }
 
-        val itemId = adapter?.getItemId(snappedPosition) ?: -1
-        dispatchOnSelectedPositionChange(snappedPosition, itemId)
+        if (snappedPosition != previousSnappedPosition) {
+            if (snappedPosition >= 0) {
+                val itemId = adapter?.getItemId(snappedPosition) ?: -1
+                dispatchOnSelectedPositionChange(snappedPosition, itemId)
+            }
+            previousSnappedPosition = snappedPosition
+        }
     }
 
     override fun setAdapter(adapter: Adapter<*>?) {
