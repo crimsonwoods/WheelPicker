@@ -70,6 +70,10 @@ open class WheelPicker : RecyclerView {
         set(value) {
             assertMainThread()
             field = value
+            val layoutManager = layoutManager
+            if (layoutManager is TransformableLinearLayoutManager) {
+                layoutManager.itemTransformer = value
+            }
             requestLayout()
         }
 
@@ -128,15 +132,10 @@ open class WheelPicker : RecyclerView {
         super.onScrollChanged(l, t, oldl, oldt)
 
         val layoutManager = layoutManager ?: return
-        val snapped = snapHelper.findSnapView(layoutManager) ?: return
-        val snappedPosition = layoutManager.getPosition(snapped)
 
-        (0 until layoutManager.childCount)
-            .mapNotNull { layoutManager.getChildAt(it) }
-            .forEach { itemView ->
-                val position = layoutManager.getPosition(itemView)
-                itemTransformer.transform(itemView, position, snappedPosition)
-            }
+        if (layoutManager is TransformableLinearLayoutManager) {
+            layoutManager.onScrollChanged(l, t, oldl, oldt)
+        }
     }
 
     override fun onScrollStateChanged(state: Int) {
@@ -236,7 +235,10 @@ open class WheelPicker : RecyclerView {
 
     private fun initialize(attrs: AttributeSet? = null, @AttrRes defStyleAttr: Int = 0) {
         clipToPadding = false
-        layoutManager = SlowScrollLinearLayoutManager(context, false)
+        layoutManager = SlowScrollLinearLayoutManager(context, false).apply {
+            itemTransformer = this@WheelPicker.itemTransformer
+            snapHelper = this@WheelPicker.snapHelper
+        }
         overScrollMode = OVER_SCROLL_NEVER
 
         context.obtainStyledAttributes(
