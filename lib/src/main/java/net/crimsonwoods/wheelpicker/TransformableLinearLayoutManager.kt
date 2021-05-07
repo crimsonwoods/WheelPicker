@@ -44,15 +44,7 @@ open class TransformableLinearLayoutManager : LinearLayoutManager {
     ) : super(context, attrs, defStyleAttr, defStyleRes)
 
     open fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
-        val snapped = snapHelper.findSnapView(this) ?: return
-        val snappedPosition = getPosition(snapped)
-
-        (0 until childCount)
-            .mapNotNull { getChildAt(it) }
-            .forEach { itemView ->
-                val position = getPosition(itemView)
-                itemTransformer.transform(itemView, position, snappedPosition)
-            }
+        transformItems()
     }
 
     override fun onItemsChanged(recyclerView: RecyclerView) {
@@ -64,17 +56,20 @@ open class TransformableLinearLayoutManager : LinearLayoutManager {
         super.onLayoutChildren(recycler, state)
 
         if (isDirty) {
-            val snapped = snapHelper.findSnapView(this) ?: return
-            val snappedPosition = getPosition(snapped)
-
-            (0 until childCount)
-                .mapNotNull { getChildAt(it) }
-                .forEach { itemView ->
-                    val position = getPosition(itemView)
-                    itemTransformer.transform(itemView, position, snappedPosition)
-                }
-
+            transformItems()
             isDirty = false
         }
+    }
+
+    private fun transformItems() {
+        val snapped = snapHelper.findSnapView(this) ?: return
+        val snappedPosition = getPosition(snapped)
+
+        (0 until childCount)
+            .mapNotNull { getChildAt(it) }
+            .forEach { itemView ->
+                val position = getPosition(itemView)
+                itemTransformer.transform(itemView, position, snappedPosition)
+            }
     }
 }
