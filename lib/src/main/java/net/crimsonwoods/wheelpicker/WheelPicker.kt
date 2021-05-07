@@ -211,6 +211,14 @@ open class WheelPicker : RecyclerView {
         synchronized(selectedPositionChangeListeners) {
             selectedPositionChangeListeners.add(listener)
         }
+
+        val layoutManager = layoutManager ?: return
+        val snapped = snapHelper.findSnapView(layoutManager) ?: return
+        val snappedPosition = layoutManager.getPosition(snapped)
+        if (snappedPosition >= 0) {
+            val itemId = adapter?.getItemId(snappedPosition) ?: -1
+            listener.onChange(snappedPosition, itemId)
+        }
     }
 
     fun removeOnSelectedPositionChangeListener(listener: OnSelectedPositionChangeListener) {
