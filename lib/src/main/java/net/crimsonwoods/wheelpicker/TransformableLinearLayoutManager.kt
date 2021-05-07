@@ -4,9 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 
-class SlowScrollLinearLayoutManager : TransformableLinearLayoutManager {
+/**
+ * Base class of custom [LinearLayoutManager] to receive "onScrollChanged" event from RecyclerView.
+ */
+open class TransformableLinearLayoutManager : LinearLayoutManager {
     constructor(
         context: Context
     ) : super(context)
@@ -16,6 +19,7 @@ class SlowScrollLinearLayoutManager : TransformableLinearLayoutManager {
         reverseLayout: Boolean
     ) : super(
         context,
+        VERTICAL,
         reverseLayout
     )
 
@@ -26,15 +30,5 @@ class SlowScrollLinearLayoutManager : TransformableLinearLayoutManager {
         @StyleRes defStyleRes: Int
     ) : super(context, attrs, defStyleAttr, defStyleRes)
 
-    override fun smoothScrollToPosition(
-        recyclerView: RecyclerView,
-        state: RecyclerView.State?,
-        position: Int
-    ) {
-        val linearSmoothScroller = SlowLinearSmoothScroller(
-            recyclerView.context
-        )
-        linearSmoothScroller.targetPosition = position
-        startSmoothScroll(linearSmoothScroller)
-    }
+    open fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) = Unit
 }
