@@ -6,12 +6,15 @@ import androidx.annotation.AttrRes
 import androidx.annotation.MainThread
 import androidx.annotation.StyleRes
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 
 /**
  * Base class of custom [LinearLayoutManager] to receive "onScrollChanged" event from RecyclerView.
  */
 open class TransformableLinearLayoutManager : LinearLayoutManager {
+    private var isDirty = false
+
     @get:MainThread
     @set:MainThread
     internal lateinit var itemTransformer: ItemTransformer
@@ -50,5 +53,28 @@ open class TransformableLinearLayoutManager : LinearLayoutManager {
                 val position = getPosition(itemView)
                 itemTransformer.transform(itemView, position, snappedPosition)
             }
+    }
+
+    override fun onItemsChanged(recyclerView: RecyclerView) {
+        super.onItemsChanged(recyclerView)
+        isDirty = true
+    }
+
+    override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
+        super.onLayoutChildren(recycler, state)
+
+        if (isDirty) {
+            val snapped = snapHelper.findSnapView(this) ?: return
+            val snappedPosition = getPosition(snapped)
+
+            (0 until childCount)
+                .mapNotNull { getChildAt(it) }
+                .forEach { itemView ->
+                    val position = getPosition(itemView)
+                    itemTransformer.transform(itemView, position, snappedPosition)
+                }
+
+            isDirty = false
+        }
     }
 }
