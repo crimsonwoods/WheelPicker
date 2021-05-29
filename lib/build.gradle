@@ -57,6 +57,26 @@ afterEvaluate {
                 groupId = "$group"
                 artifactId = 'WheelPicker'
                 version = "$version"
+
+                pom {
+                    name = "WheelPicker"
+                    description = 'Picker view that can scroll up/down items'
+                    url = "https://github.com/crimsonwoods/WheelPicker"
+
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://github.com/crimsonwoods/WheelPicker/blob/main/LICENSE'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            name = "crimsonwoods"
+                            email = "crimsonwoods.dev@gmail.com"
+                        }
+                    }
+                }
             }
         }
     }
